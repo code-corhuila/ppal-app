@@ -23,6 +23,8 @@ export function validateProductInput(input: ProductInput): ProductFieldErrors {
     errors.quantity = 'Quantity must be an integer for Units and Packages.';
   } else if (input.quantity > 999999999) {
     errors.quantity = 'Quantity is above the supported maximum.';
+  } else if (Math.abs(input.quantity - Math.round(input.quantity * 1000) / 1000) > 1e-9) {
+    errors.quantity = 'Quantity supports up to three decimal places.';
   }
   if (!(PRODUCT_UNITS as readonly string[]).includes(input.unit as ProductUnit)) {
     errors.unit = 'Select a valid unit.';
