@@ -15,7 +15,8 @@ import {
   IonSpinner,
   IonText,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  ToastController
 } from '@ionic/angular';
 import type { Product, ProductCategory, ProductInput, ProductUnit } from '../domain/product';
 import type { ProductRouteResolution } from './product.resolver';
@@ -52,6 +53,7 @@ export class ProductFormPage implements PendingChangesPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
+  private readonly toastController = inject(ToastController);
   private readonly facade = inject(PantryFacade);
   private readonly nativeFeedback = inject(NativeFeedbackService);
   readonly productId = signal<string | null>(this.route.snapshot.paramMap.get('id'));
@@ -146,6 +148,12 @@ export class ProductFormPage implements PendingChangesPage {
       this.savedSuccessfully = true;
       this.form.markAsPristine();
       await this.router.navigateByUrl('/pantry');
+      const toast = await this.toastController.create({
+        message: id ? 'Product updated.' : 'Product added.',
+        duration: 1800,
+        position: 'bottom'
+      });
+      await toast.present();
     } catch (error) {
       if (error instanceof ProductApiError) {
         this.saveError.set(error.message);
@@ -155,6 +163,32 @@ export class ProductFormPage implements PendingChangesPage {
       }
     } finally {
       this.saving.set(false);
+    }
+  }
+
+
+  async retryProductLoad(): Promise<void> {
+    const id = this.productId();
+    if (!id) return;
+
+    this.isLoading.set(true);
+    this.loadError.set(null);
+    try {
+      const product = await this.facade.getById(id);
+      this.form.patchValue({
+        name: product.name,
+        quantity: product.quantity,
+        unit: product.unit,
+        category: product.category,
+        expirationDate: product.expirationDate
+      }, { emitEvent: false });
+      this.form.markAsPristine();
+    } catch (error) {
+      this.loadError.set(error instanceof Error
+        ? error.message
+        : 'The product could not be loaded. Return to the pantry and try again.');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
