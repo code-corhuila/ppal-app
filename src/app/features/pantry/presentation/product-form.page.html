@@ -22,7 +22,10 @@
       <section class="state-card error-state" role="alert">
         <h2>Product unavailable</h2>
         <p>{{ loadError() }}</p>
-        <ion-button routerLink="/pantry">Return to Pantry</ion-button>
+        <ion-button (click)="retryProductLoad()" [disabled]="isLoading()">
+          {{ isLoading() ? 'Loading…' : 'Try Again' }}
+        </ion-button>
+        <ion-button fill="outline" routerLink="/pantry">Return to Pantry</ion-button>
       </section>
     } @else {
       <form [formGroup]="form" (ngSubmit)="save()" novalidate>
