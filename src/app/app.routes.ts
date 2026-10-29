@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { pendingChangesGuard } from './features/pantry/presentation/pending-changes.guard';
+import { productResolver } from './features/pantry/presentation/product.resolver';
 
 export const routes: Routes = [
   {
@@ -14,7 +15,8 @@ export const routes: Routes = [
   {
     path: 'products/:id/edit',
     loadComponent: () => import('./features/pantry/presentation/product-form.page').then((module) => module.ProductFormPage),
-    canDeactivate: [pendingChangesGuard]
+    canDeactivate: [pendingChangesGuard],
+    resolve: { productResult: productResolver }
   },
   { path: '', pathMatch: 'full', redirectTo: 'pantry' },
   { path: '**', redirectTo: 'pantry' }
