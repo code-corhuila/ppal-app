@@ -19,6 +19,7 @@ import {
 import type { Product, ProductCategory, ProductUnit } from '../features/pantry/domain/product';
 import { formatExpirationDate, getExpirationStatus } from '../features/pantry/domain/expiration';
 import { PantryFacade } from '../features/pantry/presentation/pantry.facade';
+import { NativeFeedbackService } from '../features/pantry/presentation/native-feedback.service';
 
 const CATEGORY_LABELS: Record<ProductCategory, string> = {
   produce: 'Produce',
@@ -61,6 +62,7 @@ const UNIT_LABELS: Record<ProductUnit, string> = {
 })
 export class HomePage {
   readonly facade = inject(PantryFacade);
+  private readonly nativeFeedback = inject(NativeFeedbackService);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
   readonly searchTerm = signal('');
@@ -132,6 +134,7 @@ export class HomePage {
     try {
       await this.facade.delete(product.id);
       await this.facade.load();
+      await this.nativeFeedback.acknowledgeSuccess();
       const toast = await this.toastController.create({ message: 'Product deleted.', duration: 1800, position: 'bottom' });
       await toast.present();
     } catch {
