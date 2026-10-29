@@ -40,4 +40,16 @@ describe('product DTO mapper', () => {
       'The server returned an invalid product representation.'
     );
   });
+
+  it('rejects fractional quantities for countable units', () => {
+    expect(() => mapProductDto({ ...validDto, quantity: 1.5, unit: 'unit' })).toThrow(
+      'The server returned a fractional quantity for a countable unit.'
+    );
+  });
+
+  it('rejects a name that violates the domain contract', () => {
+    expect(() => mapProductDto({ ...validDto, name: '   ' })).toThrow(
+      'The server returned an invalid product name.'
+    );
+  });
 });
