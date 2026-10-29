@@ -4,7 +4,7 @@ PantryPal is the required mobile client for the course project. It uses Ionic, A
 
 ## Accepted MVP
 
-The first release targets one controlled demonstration pantry and online-only CRUD operations. It includes product validation, expiration classification, sorting by expiration date, loading/empty/error states, and search as a lower-priority convenience. There are no accounts, login, camera access, native reminders, offline cache, or offline writes. See ADR-002 in ppal-docs for the authoritative scope.
+The first release targets one controlled demonstration pantry and online-only CRUD operations. It includes product validation (positive quantities with at most three decimal places, and integer counts for Units/Packages), expiration classification, sorting by expiration date, loading/empty/error states, and search as a lower-priority convenience. There are no accounts, login, camera access, native reminders, offline cache, or offline writes. See ADR-002 in ppal-docs for the authoritative scope.
 
 This app must not be presented as a public multi-user service while its API has no authentication.
 
