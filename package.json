@@ -4,14 +4,14 @@
   "author": "PantryPal",
   "homepage": "",
   "scripts": {
-    "build": "ng build",
-    "build:android:debug": "ng build --configuration development && cap sync android",
-    "lint": "ng lint",
     "ng": "ng",
-    "open:android": "cap open android",
     "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "watch": "ng build --watch --configuration development"
+    "lint": "ng lint",
+    "build:android:debug": "ng build --configuration development && cap sync android",
+    "open:android": "cap open android"
   },
   "private": true,
   "dependencies": {
@@ -21,7 +21,6 @@
     "@angular/forms": "22.2.3",
     "@angular/platform-browser": "22.2.3",
     "@angular/router": "22.2.3",
-    "@capacitor/android": "8.5.3",
     "@capacitor/app": "8.1.2",
     "@capacitor/core": "8.5.3",
     "@capacitor/haptics": "8.0.2",
@@ -30,7 +29,8 @@
     "@ionic/angular": "^9.0.0",
     "ionicons": "^8.1.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@capacitor/android": "8.5.3"
   },
   "devDependencies": {
     "@angular/build": "22.2.3",
