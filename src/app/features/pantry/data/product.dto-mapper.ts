@@ -39,7 +39,12 @@ export function mapProductDto(value: unknown): Product {
   const category = value['category'];
   const expirationDate = value['expirationDate'];
 
-  if (typeof quantity !== 'number' || !Number.isFinite(quantity) || quantity <= 0) {
+  if (!name.trim() || name.length > 120) {
+    throw new ProductApiError('The server returned an invalid product name.');
+  }
+  if (typeof quantity !== 'number' || !Number.isFinite(quantity) || quantity <= 0
+    || quantity > 999999999
+    || Math.abs(quantity - Math.round(quantity * 1000) / 1000) > 1e-9) {
     throw new ProductApiError('The server returned an invalid product quantity.');
   }
   if (typeof unit !== 'string' || !(PRODUCT_UNITS as readonly string[]).includes(unit)) {
@@ -47,6 +52,9 @@ export function mapProductDto(value: unknown): Product {
   }
   if (typeof category !== 'string' || !(PRODUCT_CATEGORIES as readonly string[]).includes(category)) {
     throw new ProductApiError('The server returned an unsupported product category.');
+  }
+  if ((unit === 'unit' || unit === 'package') && !Number.isInteger(quantity)) {
+    throw new ProductApiError('The server returned a fractional quantity for a countable unit.');
   }
   if (expirationDate !== null && (typeof expirationDate !== 'string' || !isRealCalendarDate(expirationDate))) {
     throw new ProductApiError('The server returned an invalid expiration date.');
