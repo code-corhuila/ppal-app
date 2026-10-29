@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Capacitor } from '@capacitor/core';
 import { firstValueFrom, type Observable } from 'rxjs';
@@ -9,11 +9,10 @@ import { ProductApiError } from './product-api-error';
 
 @Injectable({ providedIn: 'root' })
 export class ProductApiRepository implements ProductRepository {
+  private readonly http = inject(HttpClient);
   private readonly baseUrl = Capacitor.isNativePlatform()
     ? environment.nativeApiBaseUrl
     : environment.apiBaseUrl;
-
-  constructor(private readonly http: HttpClient) {}
 
   async list(): Promise<Product[]> {
     const value = await firstValueFrom(this.http.get<unknown>(this.baseUrl + '/products'));
