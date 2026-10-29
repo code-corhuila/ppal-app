@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { Style, StatusBar } from '@capacitor/status-bar';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
 
 @Component({
@@ -6,6 +8,12 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular';
   templateUrl: 'app.component.html',
   imports: [IonApp, IonRouterOutlet],
 })
-export class AppComponent {
-  constructor() {}
+export class AppComponent implements OnInit {
+  ngOnInit(): void {
+    if (Capacitor.isNativePlatform()) {
+      void StatusBar.setStyle({ style: Style.Light }).catch(() => {
+        // Status bar styling is best-effort and must not block app startup.
+      });
+    }
+  }
 }
