@@ -15,6 +15,7 @@ export const apiResilienceInterceptor: HttpInterceptorFn = (request, next) => {
     ? response.pipe(retry({
         count: 1,
         delay: (error: unknown) => {
+          if (error instanceof TimeoutError) return timer(350);
           if (error instanceof HttpErrorResponse && (error.status === 0 || error.status >= 500)) {
             return timer(350);
           }
