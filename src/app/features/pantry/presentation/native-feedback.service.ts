@@ -10,7 +10,7 @@ export class NativeFeedbackService {
     try {
       await Haptics.impact({ style: ImpactStyle.Light });
     } catch {
-      // Native feedback is best-effort and must never block a successful product operation.
+      console.debug('Native feedback is unavailable; the product operation remains successful.');
     }
   }
 }
