@@ -1,2 +1,8 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+/*
+ * Ionic theme variables for PantryPal.
+ * Shared design tokens are defined in global.scss and extended here when needed.
+ */
+:root {
+  --ion-font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ion-border-radius: 14px;
+}

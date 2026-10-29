@@ -1,39 +1,55 @@
 # ppal-app
 
-Aplicación móvil — canal **obligatorio** del proyecto.
+PantryPal is the required mobile client for the course project. It uses Ionic, Angular standalone components, and Capacitor.
 
-Forma parte del proyecto **PantryPal** (`ppal`) — Ingeniería para el Desarrollo Móvil (posgrado) · CORHUILA 2026-B.
+## Accepted MVP
 
-| | |
-|---|---|
-| Rol | Aplicación móvil |
-| Contenerizado | Sí: se entrega con su `Dockerfile`. |
-| Gobierno y documentación | [`ppal-docs`](https://github.com/code-corhuila/ppal-docs) |
-| Backlog | GitHub Project `ppal-backlog` |
+The first release targets one controlled demonstration pantry and online-only CRUD operations. It includes product validation, expiration classification, sorting by expiration date, loading/empty/error states, and search as a lower-priority convenience. There are no accounts, login, camera access, native reminders, offline cache, or offline writes. See ADR-002 in ppal-docs for the authoritative scope.
 
-## Ramas
+This app must not be presented as a public multi-user service while its API has no authentication.
 
-| Rama | Uso |
-|---|---|
-| `develop` | Integración (rama por defecto) |
-| `qa` | Pruebas |
-| `main` | Producción |
+## Architecture
 
-**Todo cambio a `develop`, `qa` o `main` entra por pull request.** Ninguna de las tres admite
-commits directos, force-push ni borrado (tampoco para administradores).
+The client follows a feature-first structure and the dependency direction presentation -> domain <- data:
 
-1. Trabajo diario: rama `feat/<tema>` o `fix/<tema>` desde `develop` → PR a `develop`.
-2. Promoción: PR `develop` → `qa` y PR `qa` → `main`.
-3. El PR a `main` necesita la aprobación del docente. La rama de trabajo se borra al fusionar.
+- Domain contains product types, validation rules, expiration calculations, and the repository contract.
+- Data implements the contract through one configured Angular HttpClient.
+- Presentation uses an Angular Signals facade/ViewModel with explicit immutable screen state.
+- The API is the source of truth; the client does not connect directly to PostgreSQL.
 
-## Repositorios del proyecto
+## Requirements
 
-| Repositorio | Rol |
-|---|---|
-| [`ppal-docs`](https://github.com/code-corhuila/ppal-docs) | Gobierno único del proyecto |
-| [`ppal-api`](https://github.com/code-corhuila/ppal-api) | Core de negocio (API) |
-| [`ppal-app`](https://github.com/code-corhuila/ppal-app) | Aplicación móvil |
-| [`ppal-portal`](https://github.com/code-corhuila/ppal-portal) | Portal web |
-| [`ppal-db`](https://github.com/code-corhuila/ppal-db) | Migraciones de base de datos |
-| [`ppal-infra`](https://github.com/code-corhuila/ppal-infra) | Infraestructura y orquestación |
-| [`ppal-tools`](https://github.com/code-corhuila/ppal-tools) | Paquete de herramientas |
+- Node.js 22 or newer
+- npm
+- Android Studio, JDK 21, Android SDK and an Android emulator for Android testing
+- Docker Desktop and the sibling ppal-api, ppal-db, and ppal-infra repositories for the full local flow
+
+## Install and validate
+
+Commands: npm ci, npm run lint, npm test -- --configuration ci, and npm run build.
+
+The production build uses a placeholder HTTPS API origin until a real deployment URL is configured in src/environments/environment.prod.ts. Do not release that placeholder configuration to users.
+
+## Android debug workflow
+
+The development environment targets the host machine's API from an Android emulator through 10.0.2.2:3000. Start the local API and PostgreSQL stack from ppal-infra first.
+
+Run npm run build:android:debug, then npx cap open android.
+
+After adding the Android platform, run scripts/configure-android-local-dev.ps1 to create a debug-only manifest overlay that permits cleartext traffic for the local development API. The overlay is under src/debug and is not included in release manifests. Do not enable cleartext traffic in the main application manifest or in a production build.
+
+Install the debug APK from android/app/build/outputs/apk/debug/app-debug.apk. This build is for local testing only.
+
+## Native project
+
+Generate the platform after installing dependencies with npx cap add android and npx cap sync android.
+
+Commit the Android project source to the feature branch, but do not commit Gradle build outputs, local SDK paths, signing keys, or APK/AAB/IPA artifacts. Build artifacts should be retained as release artifacts, not source files.
+
+## API configuration
+
+- Browser development: http://localhost:3000/api
+- Android emulator development: http://10.0.2.2:3000/api
+- Production: replace the reserved placeholder origin in environment.prod.ts with a controlled HTTPS deployment before making a release build.
+
+The app intentionally shows a connection error and retry action when the API is unavailable. It must never substitute a fake product list or treat a failed request as an empty pantry.

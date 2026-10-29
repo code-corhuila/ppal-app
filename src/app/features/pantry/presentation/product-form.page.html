@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="requestBack()">Back</ion-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode() ? 'Edit Product' : 'Add Product' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-content">
+  <main class="form-shell">
+    <p class="eyebrow">PANTRY INVENTORY</p>
+    <h1>{{ isEditMode() ? 'Update your product' : 'Add a product' }}</h1>
+    <p class="form-intro">Enter the details you want to track. Expiration date is optional.</p>
+
+    @if (isLoading()) {
+      <section class="state-card" role="status">
+        <ion-spinner name="crescent" aria-label="Loading product"></ion-spinner>
+        <p>Loading product details…</p>
+      </section>
+    } @else if (loadError()) {
+      <section class="state-card error-state" role="alert">
+        <h2>Product unavailable</h2>
+        <p>{{ loadError() }}</p>
+        <ion-button routerLink="/pantry">Return to Pantry</ion-button>
+      </section>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <ion-item class="form-field" [class.field-invalid]="hasFieldError('name')">
+          <ion-input
+            label="Product name"
+            labelPlacement="stacked"
+            formControlName="name"
+            maxlength="120"
+            autocomplete="off"
+            aria-label="Product name"
+            (ionInput)="clearFieldError('name')">
+          </ion-input>
+        </ion-item>
+        @if (hasFieldError('name')) {
+          <ion-text color="danger"><p class="field-error">{{ fieldError('name') }}</p></ion-text>
+        }
+
+        <div class="field-grid">
+          <div>
+            <ion-item class="form-field" [class.field-invalid]="hasFieldError('quantity')">
+              <ion-input
+                label="Quantity"
+                labelPlacement="stacked"
+                type="number"
+                inputmode="decimal"
+                min="0.001"
+                step="any"
+                formControlName="quantity"
+                aria-label="Quantity"
+                (ionInput)="clearFieldError('quantity')">
+              </ion-input>
+            </ion-item>
+            @if (hasFieldError('quantity')) {
+              <ion-text color="danger"><p class="field-error">{{ fieldError('quantity') }}</p></ion-text>
+            }
+          </div>
+          <div>
+            <ion-item class="form-field">
+              <ion-select label="Unit" labelPlacement="stacked" formControlName="unit" aria-label="Unit">
+                <ion-select-option value="unit">Units</ion-select-option>
+                <ion-select-option value="g">Grams (g)</ion-select-option>
+                <ion-select-option value="kg">Kilograms (kg)</ion-select-option>
+                <ion-select-option value="ml">Milliliters (ml)</ion-select-option>
+                <ion-select-option value="L">Liters (L)</ion-select-option>
+                <ion-select-option value="package">Packages</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+        </div>
+
+        <ion-item class="form-field">
+          <ion-select label="Category" labelPlacement="stacked" formControlName="category" aria-label="Category">
+            <ion-select-option value="produce">Produce</ion-select-option>
+            <ion-select-option value="dairy">Dairy</ion-select-option>
+            <ion-select-option value="pantry_staples">Pantry Staples</ion-select-option>
+            <ion-select-option value="canned_goods">Canned Goods</ion-select-option>
+            <ion-select-option value="bakery">Bakery</ion-select-option>
+            <ion-select-option value="meat_eggs">Meat &amp; Eggs</ion-select-option>
+            <ion-select-option value="snacks_other">Snacks &amp; Other</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="form-field" [class.field-invalid]="hasFieldError('expirationDate')">
+          <ion-input
+            label="Expiration date (optional)"
+            labelPlacement="stacked"
+            type="date"
+            formControlName="expirationDate"
+            aria-label="Expiration date"
+            (ionInput)="clearFieldError('expirationDate')">
+          </ion-input>
+        </ion-item>
+        @if (hasFieldError('expirationDate')) {
+          <ion-text color="danger"><p class="field-error">{{ fieldError('expirationDate') }}</p></ion-text>
+        }
+
+        @if (saveError()) {
+          <section class="save-error" role="alert">
+            <strong>Save failed</strong>
+            <p>{{ saveError() }}</p>
+          </section>
+        }
+
+        <div class="form-actions">
+          <ion-button expand="block" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Saving…' : (isEditMode() ? 'Save Changes' : 'Add Product') }}
+          </ion-button>
+          <ion-button expand="block" fill="outline" color="medium" type="button" [disabled]="saving()" (click)="requestBack()">Cancel</ion-button>
+        </div>
+      </form>
+    }
+  </main>
+</ion-content>
