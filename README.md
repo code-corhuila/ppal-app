@@ -1,39 +1,28 @@
 # ppal-app
 
-Aplicación móvil — canal **obligatorio** del proyecto.
+PantryPal is the required mobile client for the course project. It uses Ionic, Angular standalone components, and Capacitor.
 
-Forma parte del proyecto **PantryPal** (`ppal`) — Ingeniería para el Desarrollo Móvil (posgrado) · CORHUILA 2026-B.
+## Repository workflow
 
-| | |
-|---|---|
-| Rol | Aplicación móvil |
-| Contenerizado | Sí: se entrega con su `Dockerfile`. |
-| Gobierno y documentación | [`ppal-docs`](https://github.com/code-corhuila/ppal-docs) |
-| Backlog | GitHub Project `ppal-backlog` |
+The project uses separate repositories and keeps project scope, architecture decisions, and contracts in ppal-docs. The accepted mobile MVP targets one controlled demonstration pantry with online-only operations. The mobile app accesses PostgreSQL only through the REST API.
 
-## Ramas
+## Development status
 
-| Rama | Uso |
-|---|---|
-| `develop` | Integración (rama por defecto) |
-| `qa` | Pruebas |
-| `main` | Producción |
+This branch contains the initial Ionic + Angular application scaffold for Activity 3. A successful scaffold build or APK installation does not imply that PantryPal's product features have been implemented. Continue implementation from the reviewed H3 MVP feature branch.
 
-**Todo cambio a `develop`, `qa` o `main` entra por pull request.** Ninguna de las tres admite
-commits directos, force-push ni borrado (tampoco para administradores).
+## Requirements
 
-1. Trabajo diario: rama `feat/<tema>` o `fix/<tema>` desde `develop` → PR a `develop`.
-2. Promoción: PR `develop` → `qa` y PR `qa` → `main`.
-3. El PR a `main` necesita la aprobación del docente. La rama de trabajo se borra al fusionar.
+- Node.js and npm
+- Android Studio, JDK, and Android SDK for Android builds
+- Capacitor CLI matching the declared @capacitor/core version
 
-## Repositorios del proyecto
+## Commands
 
-| Repositorio | Rol |
-|---|---|
-| [`ppal-docs`](https://github.com/code-corhuila/ppal-docs) | Gobierno único del proyecto |
-| [`ppal-api`](https://github.com/code-corhuila/ppal-api) | Core de negocio (API) |
-| [`ppal-app`](https://github.com/code-corhuila/ppal-app) | Aplicación móvil |
-| [`ppal-portal`](https://github.com/code-corhuila/ppal-portal) | Portal web |
-| [`ppal-db`](https://github.com/code-corhuila/ppal-db) | Migraciones de base de datos |
-| [`ppal-infra`](https://github.com/code-corhuila/ppal-infra) | Infraestructura y orquestación |
-| [`ppal-tools`](https://github.com/code-corhuila/ppal-tools) | Paquete de herramientas |
+```powershell
+npm ci
+npm run lint
+npm test -- --configuration ci
+npm run build
+```
+
+The generated www folder and local build output are not source-of-truth files. Do not commit secrets, local SDK paths, keystores, or APK/AAB/IPA binaries.
