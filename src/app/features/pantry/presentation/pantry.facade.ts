@@ -1,6 +1,6 @@
-import { Inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { PRODUCT_REPOSITORY } from '../data/product-repository.token';
-import type { Product, ProductInput, ProductRepository } from '../domain/product';
+import type { Product, ProductInput } from '../domain/product';
 import { compareExpirationDates } from '../domain/expiration';
 
 export type PantryLoadStatus = 'loading' | 'loaded' | 'error';
@@ -13,13 +13,13 @@ export interface PantryViewState {
 
 @Injectable({ providedIn: 'root' })
 export class PantryFacade {
+  private readonly repository = inject(PRODUCT_REPOSITORY);
+
   readonly state = signal<PantryViewState>({
     status: 'loading',
     products: [],
     errorMessage: null
   });
-
-  constructor(@Inject(PRODUCT_REPOSITORY) private readonly repository: ProductRepository) {}
 
   async load(): Promise<void> {
     this.state.set({ status: 'loading', products: [], errorMessage: null });
