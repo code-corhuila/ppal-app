@@ -27,6 +27,11 @@ describe('product validation', () => {
       .toBe('Quantity must be an integer for Units and Packages.');
   });
 
+  it('rejects quantities with more than three decimal places', () => {
+    expect(validateProductInput({ ...validInput, quantity: 1.2345, unit: 'kg' }).quantity)
+      .toBe('Quantity supports up to three decimal places.');
+  });
+
   it('rejects impossible calendar dates', () => {
     expect(validateProductInput({ ...validInput, expirationDate: '2026-02-30' }).expirationDate)
       .toBe('Enter a valid expiration date.');
