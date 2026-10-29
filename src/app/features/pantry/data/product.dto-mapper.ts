@@ -13,6 +13,18 @@ function requireString(record: Record<string, unknown>, field: string): string {
   return value;
 }
 
+function isRealCalendarDate(value: string): boolean {
+  const match = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year
+    && date.getUTCMonth() === month - 1
+    && date.getUTCDate() === day;
+}
+
 export function mapProductDto(value: unknown): Product {
   if (!isRecord(value)) {
     throw new ProductApiError('The server returned an invalid product representation.');
@@ -36,7 +48,7 @@ export function mapProductDto(value: unknown): Product {
   if (typeof category !== 'string' || !(PRODUCT_CATEGORIES as readonly string[]).includes(category)) {
     throw new ProductApiError('The server returned an unsupported product category.');
   }
-  if (expirationDate !== null && (typeof expirationDate !== 'string' || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(expirationDate))) {
+  if (expirationDate !== null && (typeof expirationDate !== 'string' || !isRealCalendarDate(expirationDate))) {
     throw new ProductApiError('The server returned an invalid expiration date.');
   }
 
