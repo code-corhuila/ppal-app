@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     if (Capacitor.isNativePlatform()) {
       void StatusBar.setStyle({ style: Style.Light }).catch(() => {
-        // Status bar styling is best-effort and must not block app startup.
+        console.debug('Status bar styling is unavailable on this platform.');
       });
     }
   }
