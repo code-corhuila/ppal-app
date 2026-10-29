@@ -18,6 +18,7 @@ import {
   IonToolbar
 } from '@ionic/angular';
 import type { Product, ProductCategory, ProductInput, ProductUnit } from '../domain/product';
+import type { ProductRouteResolution } from './product.resolver';
 import { validateProductInput, type ProductField, type ProductFieldErrors } from '../domain/product-validation';
 import { ProductApiError } from '../data/product-api-error';
 import { PantryFacade } from './pantry.facade';
@@ -69,8 +70,26 @@ export class ProductFormPage implements PendingChangesPage {
   });
 
   constructor() {
-    const id = this.productId();
-    if (id) void this.loadProduct(id);
+    if (!this.isEditMode()) return;
+
+    const resolution = this.route.snapshot.data['productResult'] as ProductRouteResolution | undefined;
+    if (!resolution) {
+      this.loadError.set('The edit route did not provide a product result.');
+      return;
+    }
+    if (resolution.status === 'error') {
+      this.loadError.set(resolution.message);
+      return;
+    }
+
+    this.form.patchValue({
+      name: resolution.product.name,
+      quantity: resolution.product.quantity,
+      unit: resolution.product.unit,
+      category: resolution.product.category,
+      expirationDate: resolution.product.expirationDate
+    }, { emitEvent: false });
+    this.form.markAsPristine();
   }
 
   hasFieldError(field: ProductField): boolean {
@@ -159,23 +178,4 @@ export class ProductFormPage implements PendingChangesPage {
     return result.role === 'confirm';
   }
 
-  private async loadProduct(id: string): Promise<void> {
-    this.isLoading.set(true);
-    this.loadError.set(null);
-    try {
-      const product: Product = await this.facade.getById(id);
-      this.form.patchValue({
-        name: product.name,
-        quantity: product.quantity,
-        unit: product.unit,
-        category: product.category,
-        expirationDate: product.expirationDate
-      }, { emitEvent: false });
-      this.form.markAsPristine();
-    } catch (error) {
-      this.loadError.set(error instanceof Error ? error.message : 'The product could not be loaded. Return to the pantry and try again.');
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
 }
