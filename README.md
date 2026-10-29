@@ -36,7 +36,7 @@ The development environment targets the host machine's API from an Android emula
 
 Run npm run build:android:debug, then npx cap open android.
 
-After adding the Android platform, run scripts/configure-android-local-dev.ps1 to create a debug-only manifest overlay that permits cleartext traffic for the local development API. The overlay is under src/debug and is not included in release manifests. Do not enable cleartext traffic in the main application manifest or in a production build.
+After adding the Android platform, run scripts/configure-android-local-dev.ps1 to create android/app/src/debug/AndroidManifest.xml, a debug-only manifest overlay that permits cleartext traffic for the local development API. Do not enable cleartext traffic in the main manifest or release manifest. Do not enable cleartext traffic in the main application manifest or in a production build.
 
 Install the debug APK from android/app/build/outputs/apk/debug/app-debug.apk. This build is for local testing only.
 
@@ -52,4 +52,4 @@ Commit the Android project source to the feature branch, but do not commit Gradl
 - Android emulator development: http://10.0.2.2:3000/api
 - Production: replace the reserved placeholder origin in environment.prod.ts with a controlled HTTPS deployment before making a release build.
 
-The app intentionally shows a connection error and retry action when the API is unavailable. It must never substitute a fake product list or treat a failed request as an empty pantry.
+The app intentionally shows a connection error and retry action when the API is unavailable. It must never substitute a fake product list or treat a failed request as an empty pantry. On native platforms, successful create, update, and delete operations provide a best-effort light haptic acknowledgement; this feedback never determines whether a server operation succeeded.
