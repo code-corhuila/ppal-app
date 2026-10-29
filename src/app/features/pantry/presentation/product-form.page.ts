@@ -22,6 +22,7 @@ import type { ProductRouteResolution } from './product.resolver';
 import { validateProductInput, type ProductField, type ProductFieldErrors } from '../domain/product-validation';
 import { ProductApiError } from '../data/product-api-error';
 import { PantryFacade } from './pantry.facade';
+import { NativeFeedbackService } from './native-feedback.service';
 import type { PendingChangesPage } from './pending-changes.guard';
 
 @Component({
@@ -52,6 +53,7 @@ export class ProductFormPage implements PendingChangesPage {
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
   private readonly facade = inject(PantryFacade);
+  private readonly nativeFeedback = inject(NativeFeedbackService);
   readonly productId = signal<string | null>(this.route.snapshot.paramMap.get('id'));
   readonly isEditMode = computed(() => this.productId() !== null);
   readonly isLoading = signal(false);
@@ -140,6 +142,7 @@ export class ProductFormPage implements PendingChangesPage {
       const id = this.productId();
       if (id) await this.facade.update(id, input);
       else await this.facade.create(input);
+      await this.nativeFeedback.acknowledgeSuccess();
       this.savedSuccessfully = true;
       this.form.markAsPristine();
       await this.router.navigateByUrl('/pantry');
