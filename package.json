@@ -4,14 +4,15 @@
   "author": "PantryPal",
   "homepage": "",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "lint": "ng lint",
     "build:android:debug": "ng build --configuration development && cap sync android",
-    "open:android": "cap open android"
+    "lint": "ng lint",
+    "ng": "ng",
+    "open:android": "cap open android",
+    "start": "ng serve",
+    "test": "ng test",
+    "test:ci": "ng test --configuration ci",
+    "watch": "ng build --watch --configuration development"
   },
   "private": true,
   "dependencies": {
