@@ -26,7 +26,7 @@ The client follows a feature-first structure and the dependency direction presen
 
 ## Install and validate
 
-Commands: npm ci, npm run lint, npm test -- --configuration ci, and npm run build.
+Commands: npm ci, npm run lint, npm run test:ci, and npm run build.
 
 The production build uses a placeholder HTTPS API origin until a real deployment URL is configured in src/environments/environment.prod.ts. Do not release that placeholder configuration to users.
 
@@ -35,6 +35,8 @@ The production build uses a placeholder HTTPS API origin until a real deployment
 The development environment targets the host machine's API from an Android emulator through 10.0.2.2:3000. Start the local API and PostgreSQL stack from ppal-infra first.
 
 The native request path enables CapacitorHttp in `capacitor.config.ts`, so Angular HttpClient requests are routed through Capacitor's native HTTP layer on supported native platforms rather than being blocked as WebView mixed content. The Android emulator URL remains `http://10.0.2.2:3000/api`. This local HTTP configuration is for controlled debug use only; a release build must use a real HTTPS API endpoint.
+
+The Haptics and Status Bar plugins are isolated behind TypeScript ports and Capacitor adapters registered at the application composition root. These selected UI plugins require no runtime permission; camera, geolocation, and notifications remain out of MVP scope in ADR-002. Unit tests use hand-written doubles for the Haptics port and verify root registration of the Status Bar port.
 
 Run npm run build:android:debug, then npx cap open android.
 
