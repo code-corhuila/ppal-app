@@ -66,7 +66,7 @@ Edit `android/keystore.properties` locally and replace each placeholder. Verify 
 git check-ignore -v android/keystore.properties android/app/pantrypal-release.jks
 ```
 
-For H3 evidence, build the production web bundle and sync Capacitor, then run `android\\gradlew.bat -p android bundleRelease assembleRelease` from the application root after the keystore file is correctly configured. Production currently uses a reserved placeholder HTTPS endpoint; a signed artifact built with that placeholder is only a packaging demonstration, not a publicly deployable app.
+For H3 evidence, build the production web bundle and sync Capacitor, then run ` .\\android\\gradlew.bat -p android bundleRelease assembleRelease` from the application root after the keystore file is correctly configured. Production currently uses a reserved placeholder HTTPS endpoint; a signed artifact built with that placeholder is only a packaging demonstration, not a publicly deployable app.
 
 ## API configuration
 
