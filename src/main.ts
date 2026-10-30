@@ -14,6 +14,9 @@ import { AppComponent } from './app/app.component';
 import { apiResilienceInterceptor } from './app/features/pantry/data/api-resilience.interceptor';
 import { PRODUCT_REPOSITORY } from './app/features/pantry/data/product-repository.token';
 import { ProductApiRepository } from './app/features/pantry/data/product-api.repository';
+import { CapacitorHapticsAdapter } from './app/core/native/capacitor-haptics.adapter';
+import { CapacitorStatusBarAdapter } from './app/core/native/capacitor-status-bar.adapter';
+import { HAPTICS_PORT, STATUS_BAR_PORT } from './app/core/native/native-capabilities.token';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -21,6 +24,8 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
     provideHttpClient(withInterceptors([apiResilienceInterceptor])),
-    { provide: PRODUCT_REPOSITORY, useClass: ProductApiRepository }
+    { provide: PRODUCT_REPOSITORY, useClass: ProductApiRepository },
+    { provide: HAPTICS_PORT, useClass: CapacitorHapticsAdapter },
+    { provide: STATUS_BAR_PORT, useClass: CapacitorStatusBarAdapter }
   ]
 });
