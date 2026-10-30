@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { inject, Injectable } from '@angular/core';
+import { HAPTICS_PORT } from '../../../core/native/native-capabilities.token';
 
 @Injectable({ providedIn: 'root' })
 export class NativeFeedbackService {
-  async acknowledgeSuccess(): Promise<void> {
-    if (!Capacitor.isNativePlatform()) return;
+  private readonly haptics = inject(HAPTICS_PORT);
 
+  async acknowledgeSuccess(): Promise<void> {
     try {
-      await Haptics.impact({ style: ImpactStyle.Light });
+      await this.haptics.lightImpact();
     } catch {
       console.debug('Native feedback is unavailable; the product operation remains successful.');
     }
