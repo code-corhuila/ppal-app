@@ -34,6 +34,8 @@ The production build uses a placeholder HTTPS API origin until a real deployment
 
 The development environment targets the host machine's API from an Android emulator through 10.0.2.2:3000. Start the local API and PostgreSQL stack from ppal-infra first.
 
+The native request path enables CapacitorHttp in `capacitor.config.ts`, so Angular HttpClient requests are routed through Capacitor's native HTTP layer on supported native platforms rather than being blocked as WebView mixed content. The Android emulator URL remains `http://10.0.2.2:3000/api`. This local HTTP configuration is for controlled debug use only; a release build must use a real HTTPS API endpoint.
+
 Run npm run build:android:debug, then npx cap open android.
 
 After adding the Android platform, run scripts/configure-android-local-dev.ps1 to create android/app/src/debug/AndroidManifest.xml, a debug-only manifest overlay that permits cleartext traffic for the local development API. Do not enable cleartext traffic in the main manifest or release manifest. Do not enable cleartext traffic in the main application manifest or in a production build.
