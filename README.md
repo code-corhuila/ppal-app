@@ -19,7 +19,7 @@ The client follows a feature-first structure and the dependency direction presen
 
 ## Requirements
 
-- Node.js 22 or newer
+- Node.js 24.15 or newer (Angular 22 / H3 toolchain requirement)
 - npm
 - Android Studio, JDK 21, Android SDK and an Android emulator for Android testing
 - Docker Desktop and the sibling ppal-api, ppal-db, and ppal-infra repositories for the full local flow
