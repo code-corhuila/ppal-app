@@ -54,6 +54,18 @@ Commit the Android project source to the feature branch, but do not commit Gradl
 
 The debug APK is for local validation only. For a signed internal release candidate, create a release keystore locally and keep it outside Git. Use `android/keystore.properties.example` as a field-name template; copy it to `android/keystore.properties`, replace the placeholders locally, and never commit the copy or the keystore. The Gradle release build reads this local file only when present. Without it, release outputs are unsigned and must fail the signature-verification gate.
 
+Generate the keystore locally with the command below; it prompts for passwords rather than placing them in command-line arguments. Keep the entered password in a password manager, never in Git or this report.
+
+```powershell
+keytool -genkeypair -v -keystore android/app/pantrypal-release.jks -alias pantrypal -keyalg RSA -keysize 4096 -validity 10000
+Copy-Item android/keystore.properties.example android/keystore.properties
+```
+
+Edit `android/keystore.properties` locally and replace each placeholder. Verify that Git ignores both local files:
+```powershell
+git check-ignore -v android/keystore.properties android/app/pantrypal-release.jks
+```
+
 For H3 evidence, build the production web bundle and sync Capacitor, then run `android\\gradlew.bat -p android bundleRelease assembleRelease` from the application root after the keystore file is correctly configured. Production currently uses a reserved placeholder HTTPS endpoint; a signed artifact built with that placeholder is only a packaging demonstration, not a publicly deployable app.
 
 ## API configuration
