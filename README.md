@@ -50,6 +50,12 @@ Generate the platform after installing dependencies with npx cap add android and
 
 Commit the Android project source to the feature branch, but do not commit Gradle build outputs, local SDK paths, signing keys, or APK/AAB/IPA artifacts. Build artifacts should be retained as release artifacts, not source files.
 
+## Android release signing
+
+The debug APK is for local validation only. For a signed internal release candidate, create a release keystore locally and keep it outside Git. Use `android/keystore.properties.example` as a field-name template; copy it to `android/keystore.properties`, replace the placeholders locally, and never commit the copy or the keystore. The Gradle release build reads this local file only when present. Without it, release outputs are unsigned and must fail the signature-verification gate.
+
+For H3 evidence, build the production web bundle and sync Capacitor, then run `android\\gradlew.bat -p android bundleRelease assembleRelease` from the application root after the keystore file is correctly configured. Production currently uses a reserved placeholder HTTPS endpoint; a signed artifact built with that placeholder is only a packaging demonstration, not a publicly deployable app.
+
 ## API configuration
 
 - Browser development: http://localhost:3000/api
