@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>PantryPal</ion-title>
+    @if (facade.state().status === 'loaded') {
+      <ion-buttons slot="end">
+        <ion-button routerLink="/products/new">Add Product</ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pantry-content">
+  <main class="page-shell">
+    <section class="intro">
+      <p class="eyebrow">YOUR HOUSEHOLD INVENTORY</p>
+      <h1>Pantry</h1>
+      <p class="intro-copy">Know what you have. Use it before it expires.</p>
+    </section>
+
+    @if (facade.state().status === 'loading') {
+      <section class="state-card" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-label="Loading products"></ion-spinner>
+        <h2>Loading products…</h2>
+        <p>Your pantry is on its way.</p>
+      </section>
+    } @else if (facade.state().status === 'error') {
+      <section class="state-card error-state" role="alert">
+        <h2>We could not load your pantry</h2>
+        <p>{{ facade.state().errorMessage }}</p>
+        <ion-button (click)="retry()">Try Again</ion-button>
+      </section>
+    } @else if (facade.state().products.length === 0) {
+      <section class="state-card empty-state">
+        <div class="empty-mark" aria-hidden="true">P</div>
+        <h2>Your pantry is empty</h2>
+        <p>Add your first product to start tracking quantities and expiration dates.</p>
+        <ion-button routerLink="/products/new">Add Your First Product</ion-button>
+      </section>
+    } @else {
+      <section class="inventory-summary" aria-label="Pantry summary">
+        <div>
+          <span class="summary-number">{{ facade.state().products.length }}</span>
+          <span class="summary-label">products tracked</span>
+        </div>
+        <div class="summary-tip">Check the soonest dates first.</div>
+      </section>
+
+      <ion-searchbar
+        class="pantry-search"
+        aria-label="Search products by name"
+        placeholder="Search products"
+        [debounce]="150"
+        (ionInput)="onSearchChanged($event)">
+      </ion-searchbar>
+
+      @if (searchTerm().trim() && visibleProducts().length === 0) {
+        <section class="state-card compact-state">
+          <h2>No products found</h2>
+          <p>Try another product name or clear your search.</p>
+          <ion-button fill="outline" (click)="clearSearch()">Clear Search</ion-button>
+        </section>
+      } @else {
+        <ion-list class="product-list" lines="none" aria-label="Pantry products">
+          @for (product of visibleProducts(); track product.id) {
+            <ion-item class="product-row">
+              <ion-label>
+                <h2>{{ product.name }}</h2>
+                <p>{{ categoryLabel(product.category) }}</p>
+                <p class="product-quantity">{{ product.quantity }} {{ unitLabel(product.unit) }}</p>
+                <p>{{ formatDate(product.expirationDate) }}</p>
+                <ion-badge [color]="statusColor(product)" class="status-badge">{{ statusLabel(product) }}</ion-badge>
+              </ion-label>
+              <ion-buttons slot="end" class="row-actions">
+                <ion-button fill="clear" [routerLink]="['/products', product.id, 'edit']" [attr.aria-label]="'Edit ' + product.name">Edit</ion-button>
+                <ion-button fill="clear" color="danger" (click)="confirmDelete(product)" [attr.aria-label]="'Delete ' + product.name">Delete</ion-button>
+              </ion-buttons>
+            </ion-item>
+          }
+        </ion-list>
+      }
+    }
+    <p class="scope-note">Demo pantry · Online only · No account required</p>
+  </main>
+</ion-content>
