@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
+﻿import { TestBed } from '@angular/core/testing';
+import { describe, expect, it, vi } from 'vitest';
 import { PRODUCT_REPOSITORY } from '../data/product-repository.token';
-import type { Product, ProductRepository } from '../domain/product';
+import type { Product, ProductInput, ProductRepository } from '../domain/product';
 import { PantryFacade } from './pantry.facade';
 
 const makeProduct = (name: string, expirationDate: string | null): Product => ({
@@ -25,6 +25,14 @@ async function createFacade(repository: ProductRepository): Promise<PantryFacade
 
   return TestBed.inject(PantryFacade);
 }
+
+const validInput: ProductInput = {
+  name: 'Olive Oil',
+  quantity: 2,
+  unit: 'L',
+  category: 'pantry_staples',
+  expirationDate: '2026-11-15'
+};
 
 describe('PantryFacade', () => {
   it('sorts dated products first and undated products last', async () => {
@@ -68,5 +76,54 @@ describe('PantryFacade', () => {
     expect(facade.state().status).toBe('error');
     expect(facade.state().products).toEqual([]);
     expect(facade.state().errorMessage).toContain('Check your connection');
+  });
+
+  it('forwards getById to the repository and returns its product', async () => {
+    const product = makeProduct('Apples', '2026-11-10');
+    const getById = vi.fn(async (_id: string) => product);
+    const repository = { getById } as unknown as ProductRepository;
+    const facade = await createFacade(repository);
+
+    await expect(facade.getById('Apples')).resolves.toEqual(product);
+    expect(getById).toHaveBeenCalledWith('Apples');
+  });
+
+  it('forwards create to the repository and returns the created product', async () => {
+    const created: Product = {
+      ...makeProduct(validInput.name, validInput.expirationDate),
+      quantity: validInput.quantity,
+      unit: validInput.unit,
+      category: validInput.category
+    };
+    const create = vi.fn(async (_input: ProductInput) => created);
+    const repository = { create } as unknown as ProductRepository;
+    const facade = await createFacade(repository);
+
+    await expect(facade.create(validInput)).resolves.toEqual(created);
+    expect(create).toHaveBeenCalledWith(validInput);
+  });
+
+  it('forwards update to the repository and returns the updated product', async () => {
+    const updated: Product = {
+      ...makeProduct(validInput.name, validInput.expirationDate),
+      quantity: 3,
+      unit: validInput.unit,
+      category: validInput.category
+    };
+    const update = vi.fn(async (_id: string, _input: ProductInput) => updated);
+    const repository = { update } as unknown as ProductRepository;
+    const facade = await createFacade(repository);
+
+    await expect(facade.update('olive-oil-id', validInput)).resolves.toEqual(updated);
+    expect(update).toHaveBeenCalledWith('olive-oil-id', validInput);
+  });
+
+  it('forwards delete to the repository', async () => {
+    const deleteProduct = vi.fn(async (_id: string): Promise<void> => undefined);
+    const repository = { delete: deleteProduct } as unknown as ProductRepository;
+    const facade = await createFacade(repository);
+
+    await expect(facade.delete('rice-id')).resolves.toBeUndefined();
+    expect(deleteProduct).toHaveBeenCalledWith('rice-id');
   });
 });
